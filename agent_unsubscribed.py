@@ -1,49 +1,42 @@
 import logging
 
-from utils.jax import jax
-from utils.events import schedule, slot
+from .utils.utility import Utility
+from .utils.events import schedule, slot
+
 
 class AgentUnSubscribed:
-    
     def run(self, conversation, slots, dispatcher, metadata):
-               
-        cc_user = jax.get_key(slots, 'ccUser')
-        cc_user_list = jax.get_key(slots, 'ccUserList', [])
-        channel_session_list = jax.get_key(slots, 'channelSessionList', [])
+        conversation_id = conversation['id']
+        self.log_info('AGENT_UNSUBSCRIBED intent received', conversation_id)
 
-        logging.info('['+conversation['id']+'] - AGENT_UNSUBSCRIBED intent received - Number of ChannelSessions = ['+str(len(channel_session_list))+'] - Number of Agents = ['+str(len(cc_user_list))+']')
+        cc_user_list = Utility.get_agents(conversation)
+        channel_session_list = Utility.get_channel_sessions(conversation)
 
-        cc_user = jax.get_from_list(cc_user_list, cc_user['id'])
-        
-        if cc_user is None:
-            logging.info('['+conversation['id']+'] - Agent not found')
-        else:
-            cc_user_list.remove(cc_user)
-            logging.info('['+conversation['id']+'] - Agent removed successfully')
-
+        self.log_info('Number of ChannelSessions = [' + str(len(channel_session_list)) + ']', conversation_id)
+        self.log_info('Number of Agents = ['+str(len(cc_user_list))+']', conversation_id)
 
         if not cc_user_list and not channel_session_list:
-            logging.info('['+conversation['id']+'] - No Participant left in conversation, sending end-conversation')
+            self.log_info("No Participant left in conversation, sending end-conversation", conversation_id)
             dispatcher.action('END_CONVERSATION')
             return [{'type': 'reset'}]
 
-        elif channel_session_list and not cc_user_list:
-            channel_session = channel_session_list[len(channel_session_list) - 1]
+        if channel_session_list and not cc_user_list:
+            channel_session = Utility.get_latest_channel_session(conversation)
 
-            channel_session_sla_map = jax.get_key(slots, 'channel_session_sla_map', {})
+            channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
             channel_session_sla_map[channel_session['id']] = True
 
-            routing_mode = jax.get_routing_mode_from_channel_session(channel_session)
-            reason_code = jax.get_key(slots, 'agentSubUnSubReason')
+            inactivity_timeout = Utility.get_inactivity_timeout(channel_session)
+            schedule_timer = schedule.customer_sla(conversation_id, channel_session['id'], inactivity_timeout)
 
-            events = [
-                schedule.customer_sla(conversation['id'], channel_session['id'], jax.get_timeout_from_channel_session(channel_session)),
-                slot.set('ccUserList', cc_user_list),
-                slot.set('channel_session_sla_map', channel_session_sla_map)
-            ]
+            events = [schedule_timer, slot.set('channel_session_sla_map', channel_session_sla_map)]
+
+            routing_mode = Utility.get_routing_mode_from(channel_session)
+            reason_code = Utility.get_key(slots, 'agentSubUnSubReason')
 
             if routing_mode == 'PUSH' and reason_code == 'FORCED_LOGOUT':
-                logging.info('['+conversation['id']+'] - Customer exists, No agent left, rMode=PUSH, reason=Forced-Logout, Dispatching find-agent')
+                self.log_info("Customer exists, No agent left, rMode=PUSH, reason=Forced-Logout, "
+                              "Dispatching find-agent", conversation_id)
                 dispatcher.action('FIND_AGENT')
                 events.append(slot.set('agent_state', 'requested'))
                 return events
@@ -51,7 +44,8 @@ class AgentUnSubscribed:
             events.append(slot.set('agent_state', 'not_requested'))
             return events
 
-        else:
-            return [
-                slot.set('ccUserList', cc_user_list)
-            ]
+        return []
+
+    @staticmethod
+    def log_info(msg, conversation_id):
+        logging.info('[AGENT_UNSUBSCRIBED] | conversation = [' + conversation_id + '] - ' + msg)

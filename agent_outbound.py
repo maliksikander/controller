@@ -1,24 +1,26 @@
 import logging
+from .utils.utility import Utility
 
-from utils.jax import jax
 
 class AgentOutbound:
-
     def run(self, conversation, slots, dispatcher, metadata):
-        
-        agent_outbound_dto = jax.get_key(slots, 'agentOutboundDto')
-        logging.info('['+conversation['id']+'] - Agent_Outbound request received - AgentOutboundDto: ' + str(agent_outbound_dto))
+        conversation_id = conversation['id']
 
-        channel_session = jax.get_channel_session_from_conversation(conversation)
+        agent_outbound_dto = Utility.get_key(slots, 'agentOutboundDto')
+        self.log_info("Agent_Outbound request received - AgentOutboundDto: " + str(agent_outbound_dto), conversation_id)
+
+        channel_session_id = agent_outbound_dto['channelSessionId']
+        channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation)
 
         if channel_session is None:
-            logging.info('['+conversation['id']+'] - No ChannelSession found for this Agent-Outbound request')
+            self.log_info("No ChannelSession found for this Agent-Outbound request", conversation_id)
             return []
 
         agent_id = agent_outbound_dto['agentId']
+        agent = Utility.get_agent_by_id(agent_id, conversation)
 
-        if jax.is_exist_in_list(jax.get_key(slots, 'ccUserList', []), agent_id):
-            logging.info('['+conversation['id']+'] - Agent: ' + str(agent_id) + ' already exist in this conversation')
+        if agent is not None:
+            self.log_info('Agent: ' + str(agent_id) + ' already exist in this conversation', conversation_id)
             return []
 
         dispatcher.action('ASSIGN_AGENT', {
@@ -26,3 +28,7 @@ class AgentOutbound:
             'channelSession': channel_session
         })
         return []
+
+    @staticmethod
+    def log_info(msg, conversation_id):
+        logging.info('[AGENT_OUTBOUND] | conversation = [' + conversation_id + '] - ' + msg)

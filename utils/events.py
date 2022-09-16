@@ -15,7 +15,6 @@ class schedule:
 
 
 class slot:
-    
     @staticmethod
     def set(name: str, value: any):
         return {
@@ -26,7 +25,6 @@ class slot:
 
 
 class unschedule:
-
     @staticmethod
     def customer_sla(conversation_id: str, channel_session_id: str):
         return {

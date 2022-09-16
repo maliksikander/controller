@@ -1,32 +1,36 @@
-import imp
 import logging
 
-from utils.jax import jax
-from utils.events import schedule, slot
+from .utils.utility import Utility
+from .utils.events import schedule, slot
+
 
 class AgentMessage:
-
     def run(self, conversation, slots, dispatcher, metadata):
-        
-        logging.info('['+conversation['id']+'] - Agent message is received')
+        conversation_id = conversation['id']
+        self.log_info("Agent message is received", conversation_id)
 
-        channel_session = jax.get_channel_session_from_conversation(conversation)
-        channel_session_sla_map = jax.get_key(slots, 'channel_session_sla_map', {})
+        cim_message = Utility.get_key(slots, 'cimMessage')
+        channel_session = cim_message['header']['channelSession']
+        channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
         
         if channel_session is None:
-            logging.info('['+conversation['id']+'] - Channel-Session not found, returning without starting customer activity timer')
+            self.log_info("Channel-Session not found, returning...", conversation_id)
             return []
-        elif jax.get_key(channel_session_sla_map, channel_session['id'], False):
-            logging.info('['+conversation['id']+'] - Customer activity timer is already running, not starting again')
+        elif Utility.get_key(channel_session_sla_map, channel_session['id'], False):
+            self.log_info("Customer activity timer is already running, not starting again", conversation_id)
             return []
 
-        timeout = jax.get_timeout_from_channel_session(channel_session)
+        timeout = Utility.get_inactivity_timeout(channel_session)
         channel_session_sla_map[channel_session['id']] = True
         
-        logging.info('['+conversation['id']+'] - Scheduling customer activity timer for ' + str(timeout) + ' seconds')
+        self.log_info("Scheduling customer activity timer for " + str(timeout) + " seconds", conversation_id)
         
         return [
             schedule.customer_sla(conversation['id'], channel_session['id'], timeout),
             slot.set('channel_session_sla_map', channel_session_sla_map)
         ]
+
+    @staticmethod
+    def log_info(msg, conversation_id):
+        logging.info('[AGENT_MESSAGE] | conversation = [' + conversation_id + '] - ' + msg)
         

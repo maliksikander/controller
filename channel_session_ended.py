@@ -1,46 +1,40 @@
 import logging
 
-from utils.jax import jax
-from utils.events import unschedule, slot
+from .utils.utility import Utility
+from .utils.events import unschedule, slot
+
 
 class ChannelSessionEnded:
-    
     def run(self, conversation, slots, dispatcher, metadata):
-        
-        logging.info('['+conversation['id']+'] - CHANNEL_SESSION_ENDED intent received')
+        conversation_id = conversation['id']
+        self.log_info("CHANNEL_SESSION_ENDED intent received", conversation_id)
 
-        channel_session = jax.get_key(slots, 'channelSession')
-        channel_session_list = jax.get_key(slots, 'channelSessionList', [])
-        cc_user_list = jax.get_key(slots, 'ccUserList', [])
+        channel_session = Utility.get_key(slots, 'channelSession')
+        channel_session_list = Utility.get_channel_sessions(conversation)
+        cc_user_list = Utility.get_agents(conversation)
 
-        channel_session = jax.get_from_list(channel_session_list, channel_session['id'])
-        
-        if channel_session is None:
-            logging.info('['+conversation['id']+'] - ChannelSession not found')
-        else:
-            channel_session_list.remove(channel_session)
-            logging.info('['+conversation['id']+'] - Channel-Session removed from channel_session_list')
-
+        channel_session = Utility.get_from_list(channel_session_list, channel_session['id'])
 
         if not channel_session_list and not cc_user_list:
-            
-            routing_mode = jax.get_routing_mode_from_channel_session(channel_session)
-            agent_state = str(jax.get_key(slots, 'agent_state'))
-            logging.info('['+conversation['id']+'] - Agent state: ' + agent_state)
+            routing_mode = Utility.get_routing_mode_from(channel_session)
+            agent_state = str(Utility.get_key(slots, 'agent_state'))
+            self.log_info('Agent state: ' + agent_state, conversation_id)
             
             if routing_mode == 'PUSH' and agent_state == 'requested':
-                logging.info('['+conversation['id']+'] - Agent was requested, dispatching CANCEL_RESOURCE bot-action')
+                self.log_info("Agent was requested, dispatching CANCEL_RESOURCE bot-action", conversation_id)
                 dispatcher.action('CANCEL_RESOURCE', {"reasonCode": "CANCELLED"})
 
             dispatcher.action('END_CONVERSATION')
-            logging.info('['+conversation['id']+'] - No channel_sessions and agents remaining in conversation, restarting tracker')
+            self.log_info("No channel_sessions and agents left in conversation, restarting tracker", conversation_id)
             return [{'type': 'reset'}]
 
-        channel_session_sla_map = jax.get_key(slots, 'channel_session_sla_map', {})
+        channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
         del channel_session_sla_map[channel_session['id']]
-        
-        return [
-            unschedule.customer_sla(conversation['id'], channel_session['id']),
-            slot.set('channelSessionList', channel_session_list),
-            slot.set('channel_session_sla_map', channel_session_sla_map)
-        ]
+
+        cancel_timer = unschedule.customer_sla(conversation['id'], channel_session['id'])
+
+        return [cancel_timer, slot.set('channel_session_sla_map', channel_session_sla_map)]
+
+    @staticmethod
+    def log_info(msg, conversation_id):
+        logging.info('[CHANNEL_SESSION_ENDED] | conversation = [' + conversation_id + '] - ' + msg)

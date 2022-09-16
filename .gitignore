@@ -1,0 +1,11 @@
+**/.DS_Store
+HELP.md
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### VS Code ###
+.vscode/

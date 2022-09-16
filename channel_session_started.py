@@ -1,43 +1,41 @@
 import logging
 
-from utils.jax import jax
-from utils.events import schedule, slot
+from .utils.utility import Utility
+from .utils.events import schedule, slot
+
 
 class ChannelSessionStarted:
-    
     def run(self, conversation, slots, dispatcher, metadata):
-        
-        logging.info('['+conversation['id']+'] - Channel-session-started intent received')
-        
-        channel_session = jax.get_key(slots, 'channelSession')
-        channel_session['participantType'] = 'ChannelSession'
-        
-        channel_session_list = jax.get_key(slots, 'channelSessionList', [])
+        conversation_id = conversation['id']
+        self.log_info("Channel-session-started intent received", conversation_id)
+
+        channel_session = Utility.get_key(slots, 'channelSession')
+        channel_session_list = Utility.get_channel_sessions(conversation)
         events = []
 
-        
-        channel_session_sla_map = jax.get_key(slots, 'channel_session_sla_map', {})
+        channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
         channel_session_sla_map[channel_session['id']] = False
-        
-        channel_session_list.append(channel_session)
-        logging.info('['+conversation['id']+'] - channel-session added to conversation successfully')
 
         for c_session in channel_session_list:
-            if not jax.get_key(channel_session_sla_map, c_session['id'], False):
+            if not Utility.get_key(channel_session_sla_map, c_session['id'], False):
                 channel_session_sla_map[c_session['id']] = True
-                events.append(schedule.customer_sla(conversation['id'], channel_session['id'], jax.get_timeout_from_channel_session(c_session)))
-        
 
-        latest_intent = jax.get_key(channel_session, 'latestIntent')
-        logging.info('['+conversation['id']+'] - Latest intent in channel Session: ' + str(latest_intent))
+                inactivity_timeout = Utility.get_inactivity_timeout(c_session)
+                schedule_timer = schedule.customer_sla(conversation_id, c_session['id'], inactivity_timeout)
+
+                events.append(schedule_timer)
+
+        latest_intent = Utility.get_key(channel_session, 'latestIntent')
+        self.log_info('Latest intent in channel Session: ' + str(latest_intent), conversation_id)
 
         if not latest_intent:
-            logging.info('['+conversation['id']+'] - Latest intent is Empty, Dispatching welcome message')
-            dispatcher.text('Hey! this is sparrow from Expertflow. How may i help you today?')
+            self.log_info("Latest intent is Empty, Dispatching welcome message", conversation_id)
+            dispatcher.text('Hey! this is sparrow from ExpertFlow. How may i help you today?')
 
-        events.extend([
-            slot.set('channelSessionList', channel_session_list),
-            slot.set('channel_session_sla_map', channel_session_sla_map)
-        ])
+        events.append(slot.set('channel_session_sla_map', channel_session_sla_map))
 
         return events
+
+    @staticmethod
+    def log_info(msg, conversation_id):
+        logging.info('[CHANNEL_SESSION_STARTED] | conversation = [' + conversation_id + '] - ' + msg)
