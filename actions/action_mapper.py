@@ -12,7 +12,8 @@ from .customer_sla import CustomerSla
 from .action_message import ActionMessage
 from .bot_message import BotMessage
 from .no_agent_available import NoAgentAvailable
-from end_chat import EndChat
+from .end_chat import EndChat
+from .default import Default
 
 
 actions = {
@@ -31,4 +32,5 @@ actions = {
     'NO_AGENT_AVAILABLE': NoAgentAvailable(),
     'end_chat': EndChat(),
     'customer_sla': CustomerSla(),
+    'default': Default()
 }
