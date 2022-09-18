@@ -21,19 +21,15 @@ class AgentUnSubscribed:
             return [{'type': 'reset'}]
 
         if channel_session_list and not cc_user_list:
-            channel_session = Utility.get_latest_channel_session(conversation)
+            bot_participant = Utility.get_bot_participant(conversation)
+            if bot_participant is not None:
+                bot_id = bot_participant['participant']['id']
+                role = 'PRIMARY'
+                dispatcher.action('CHANGE_PARTICIPANT_ROLE', {"participantId": bot_id, "role": role})
 
-            channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
-            channel_session_sla_map[channel_session['id']] = True
+            events = self.schedule_inactivity_timer(slots, conversation)
 
-            inactivity_timeout = Utility.get_inactivity_timeout(channel_session)
-            schedule_timer = schedule.customer_sla(conversation_id, channel_session['id'], inactivity_timeout)
-
-            events = [schedule_timer, slot.set('channel_session_sla_map', channel_session_sla_map)]
-
-            first_channel_session = conversation['channelSession']
-            routing_mode = Utility.get_routing_mode_from(first_channel_session)
-
+            routing_mode = Utility.get_routing_mode_from(conversation['channelSession'])
             reason_code = Utility.get_key(slots, 'agentSubUnSubReason')
 
             if routing_mode == 'PUSH' and reason_code == 'FORCED_LOGOUT':
@@ -47,6 +43,18 @@ class AgentUnSubscribed:
             return events
 
         return []
+
+    @staticmethod
+    def schedule_inactivity_timer(slots, conversation):
+        channel_session = Utility.get_latest_channel_session(conversation)
+
+        channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
+        channel_session_sla_map[channel_session['id']] = True
+
+        inactivity_timeout = Utility.get_inactivity_timeout(channel_session)
+        schedule_timer = schedule.customer_sla(conversation['id'], channel_session['id'], inactivity_timeout)
+
+        return [schedule_timer, slot.set('channel_session_sla_map', channel_session_sla_map)]
 
     @staticmethod
     def log_info(msg, conversation_id):
