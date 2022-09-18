@@ -31,7 +31,9 @@ class AgentUnSubscribed:
 
             events = [schedule_timer, slot.set('channel_session_sla_map', channel_session_sla_map)]
 
-            routing_mode = Utility.get_routing_mode_from(channel_session)
+            first_channel_session = conversation['channelSession']
+            routing_mode = Utility.get_routing_mode_from(first_channel_session)
+
             reason_code = Utility.get_key(slots, 'agentSubUnSubReason')
 
             if routing_mode == 'PUSH' and reason_code == 'FORCED_LOGOUT':

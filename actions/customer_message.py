@@ -1,7 +1,7 @@
 import logging
 
 from .utils.utility import Utility
-from .utils.events import schedule, unschedule
+from .utils.events import schedule, unschedule, slot
 
 
 class CustomerMessage:
@@ -14,22 +14,11 @@ class CustomerMessage:
 
         channel_session = cim_message['header']['channelSession']
         channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
-
-        cc_user_list = Utility.get_agents(conversation)
-        agents_present_in_conversation = cc_user_list is not None and len(cc_user_list) > 0
         
         events = self.schedule_timers_for_other_sessions(conversation, channel_session, channel_session_sla_map)
         events.append(unschedule.customer_sla(conversation_id, channel_session['id']))
-
-        if not agents_present_in_conversation:
-            routing_mode = Utility.get_routing_mode_from(channel_session)
-
-            if routing_mode == 'PUSH' and Utility.get_key(slots, 'agent_state') == 'requested':
-                dispatcher.text('An agent has been requested for this conversation, '
-                                'he/she will join you shortly. Please wait!')
-            elif routing_mode == 'PULL':
-                dispatcher.text('Bot could not understand your message, all relevant agents have been notified, '
-                                'agent(s) will join you shortly. Please wait!')
+        channel_session_sla_map[channel_session['id']] = False
+        events.append(slot.set('channel_session_sla_map', channel_session_sla_map))
         
         return events
 
