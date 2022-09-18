@@ -76,3 +76,13 @@ class Utility:
                 result.append(participant['participant'])
 
         return result
+
+    @staticmethod
+    def get_bot_participant(conversation):
+        participants = conversation['participants']
+
+        for participant in participants:
+            if participant['type'] == 'BOT':
+                return participant
+
+        return None
