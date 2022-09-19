@@ -13,8 +13,6 @@ class ChannelSessionEnded:
         channel_session_list = Utility.get_channel_sessions(conversation)
         cc_user_list = Utility.get_agents(conversation)
 
-        channel_session = Utility.get_from_list(channel_session_list, channel_session['id'])
-
         if not channel_session_list and not cc_user_list:
             routing_mode = Utility.get_routing_mode_from(channel_session)
             agent_state = str(Utility.get_key(slots, 'agent_state'))
