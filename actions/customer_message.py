@@ -35,6 +35,7 @@ class CustomerMessage:
             if not Utility.get_key(channel_session_sla_map, c_session['id'], False):
                 inactivity_timeout = Utility.get_inactivity_timeout(c_session)
                 events.append(schedule.customer_sla(conversation['id'], c_session['id'], inactivity_timeout))
+                channel_session_sla_map[c_session['id']] = True
 
         return events
 
