@@ -15,7 +15,7 @@ class NoAgentAvailable:
             self.log_info("Channel session list is empty, returning...", conversation_id)
             return [{'type': 'reset'}]
 
-        agent_state = slot.set('agent_state', 'not_requested')
+        agent_state = slot.set('agent_state', Utility.create_agent_state('not_requested', None))
 
         channel_session = Utility.get_latest_channel_session(conversation)
         channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})

@@ -12,6 +12,7 @@ from .customer_sla import CustomerSla
 from .action_message import ActionMessage
 from .bot_message import BotMessage
 from .no_agent_available import NoAgentAvailable
+from .task_enqueued import TaskEnqueued
 from .end_chat import EndChat
 from .default import Default
 
@@ -30,6 +31,7 @@ actions = {
     'ACTION_MESSAGE': ActionMessage(),
     'BOT_MESSAGE': BotMessage(),
     'NO_AGENT_AVAILABLE': NoAgentAvailable(),
+    'TASK_ENQUEUED': TaskEnqueued(),
     'end_chat': EndChat(),
     'customer_sla': CustomerSla(),
     'default': Default()

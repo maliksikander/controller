@@ -86,3 +86,10 @@ class Utility:
                 return participant
 
         return None
+
+    @staticmethod
+    def create_agent_state(state, direction):
+        return {
+            "state": state,
+            "direction": direction
+        }

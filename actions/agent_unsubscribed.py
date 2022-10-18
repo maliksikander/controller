@@ -15,32 +15,33 @@ class AgentUnSubscribed:
         self.log_info('Number of ChannelSessions = [' + str(len(channel_session_list)) + ']', conversation_id)
         self.log_info('Number of Agents = ['+str(len(cc_user_list))+']', conversation_id)
 
-        if not cc_user_list and not channel_session_list:
-            self.log_info("No Participant left in conversation, sending end-conversation", conversation_id)
-            dispatcher.action('END_CONVERSATION')
-            return [{'type': 'reset'}]
+        if not cc_user_list:  # All agents left
+            agent_state = Utility.get_key(slots, 'agent_state')
+            direction = agent_state['direction']
 
-        if channel_session_list and not cc_user_list:
-            bot_participant = Utility.get_bot_participant(conversation)
-            if bot_participant is not None:
-                bot_id = bot_participant['participant']['id']
-                role = 'PRIMARY'
-                dispatcher.action('CHANGE_PARTICIPANT_ROLE', {"participantId": bot_id, "role": role})
+            if agent_state['state'] == 'requested' and direction == 'DIRECT_CONFERENCE':
+                self.dispatch_cancel_resource(dispatcher, conversation_id)
 
-            events = self.schedule_inactivity_timer(slots, conversation)
+            if not channel_session_list:  # Customer has left
+                self.dispatch_end_conversation(dispatcher, conversation_id)
+                return [{'type': 'reset'}]
+            else:  # Customer is still present
+                self.if_bot_in_conversation_make_it_primary(dispatcher, conversation)
 
-            routing_mode = Utility.get_routing_mode_from(conversation['channelSession'])
-            reason_code = Utility.get_key(slots, 'agentSubUnSubReason')
+                events = self.schedule_inactivity_timer(slots, conversation)
+                routing_mode = Utility.get_routing_mode_from(conversation['channelSession'])
+                reason_code = Utility.get_key(slots, 'agentSubUnSubReason')
 
-            if routing_mode == 'PUSH' and reason_code == 'FORCED_LOGOUT':
-                self.log_info("Customer exists, No agent left, rMode=PUSH, reason=Forced-Logout, "
-                              "Dispatching find-agent", conversation_id)
-                dispatcher.action('FIND_AGENT')
-                events.append(slot.set('agent_state', 'requested'))
+                if routing_mode == 'PUSH' and reason_code == 'FORCED_LOGOUT':
+                    self.log_info("Customer exists, No agent left, rMode=PUSH, reason=Forced-Logout, "
+                                  "Dispatching find-agent", conversation_id)
+
+                    dispatcher.action('FIND_AGENT')
+                    events.append(slot.set('agent_state', Utility.create_agent_state('requested', 'INBOUND')))
+                    return events
+
+                events.append(slot.set('agent_state', Utility.create_agent_state('not_requested', None)))
                 return events
-            
-            events.append(slot.set('agent_state', 'not_requested'))
-            return events
 
         return []
 
@@ -59,3 +60,20 @@ class AgentUnSubscribed:
     @staticmethod
     def log_info(msg, conversation_id):
         logging.info('[AGENT_UNSUBSCRIBED] | conversation = [' + conversation_id + '] - ' + msg)
+
+    def dispatch_cancel_resource(self, dispatcher, conversation_id):
+        self.log_info("Agent was requested for conference, current agent(s) left, "
+                      "dispatching CANCEL_RESOURCE bot-action", conversation_id)
+        dispatcher.action('CANCEL_RESOURCE', {"reasonCode": "CANCELLED"})
+
+    def dispatch_end_conversation(self, dispatcher, conversation_id):
+        self.log_info("Customer and Agent(s) left the conversation, ending conversation", conversation_id)
+        dispatcher.action('END_CONVERSATION')
+
+    @staticmethod
+    def if_bot_in_conversation_make_it_primary(dispatcher, conversation):
+        bot_participant = Utility.get_bot_participant(conversation)
+        if bot_participant is not None:
+            bot_id = bot_participant['participant']['id']
+            role = 'PRIMARY'
+            dispatcher.action('CHANGE_PARTICIPANT_ROLE', {"participantId": bot_id, "role": role})

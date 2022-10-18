@@ -13,14 +13,17 @@ class ActionMessage:
 
         events = []
 
-        agent_state = Utility.get_key(slots, 'agent_state', "not_requested")
+        agent_state = Utility.get_key(slots, "agent_state")
         routing_mode = Utility.get_routing_mode_from(conversation['channelSession'])
+
         if name == 'FIND_AGENT':
-            if routing_mode != 'PUSH' or agent_state == 'requested':
+            if routing_mode != 'PUSH' or agent_state['state'] == 'requested':
                 return []
-            events.append(slot.set('agent_state', 'requested'))
+            agent_state = Utility.create_agent_state('requested', 'INBOUND')
+            events.append(slot.set("agent_state", agent_state))
 
         dispatcher.action(name, data)
+
         return events
 
     @staticmethod

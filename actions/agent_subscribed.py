@@ -15,7 +15,8 @@ class AgentSubscribed:
             self.log_info("Dispatching REVOKE_REQUEST bot-action, Customer has left", conversation_id)
             
             dispatcher.action('REVOKE_REQUEST', {"reasonCode": "CANCELLED"})
-            return [slot.set('agent_state', 'not_requested')]
+            agent_state = Utility.create_agent_state('not_requested', None)
+            return [slot.set('agent_state', agent_state)]
 
         bot_participant = Utility.get_bot_participant(conversation)
         if bot_participant is not None and bot_participant['role'] == 'PRIMARY':
@@ -23,7 +24,8 @@ class AgentSubscribed:
             role = 'ASSISTANT'
             dispatcher.action('CHANGE_PARTICIPANT_ROLE', {"participantId": bot_id, "role": role})
 
-        return [slot.set('agent_state', 'subscribed')]
+        agent_state = Utility.create_agent_state('subscribed', None)
+        return [slot.set('agent_state', agent_state)]
 
     @staticmethod
     def log_info(msg, conversation_id):

@@ -12,27 +12,33 @@ class ChannelSessionEnded:
         channel_session = Utility.get_key(slots, 'channelSession')
         channel_session_list = Utility.get_channel_sessions(conversation)
         cc_user_list = Utility.get_agents(conversation)
+        events = []
 
-        if not channel_session_list and not cc_user_list:
-            routing_mode = Utility.get_routing_mode_from(channel_session)
-            agent_state = str(Utility.get_key(slots, 'agent_state'))
-            self.log_info('Agent state: ' + agent_state, conversation_id)
-            
-            if routing_mode == 'PUSH' and agent_state == 'requested':
-                self.log_info("Agent was requested, dispatching CANCEL_RESOURCE bot-action", conversation_id)
-                dispatcher.action('CANCEL_RESOURCE', {"reasonCode": "CANCELLED"})
+        if not channel_session_list:  # Customer left
+            if Utility.get_key(slots, 'agent_state')['state'] == 'requested':
+                self.dispatch_cancel_resource(dispatcher, conversation_id)
+                events.append(slot.set('agent_state', Utility.create_agent_state('not_requested', None)))
 
-            dispatcher.action('END_CONVERSATION')
-            self.log_info("No channel_sessions and agents left in conversation, restarting tracker", conversation_id)
-            return [{'type': 'reset'}]
+            if not cc_user_list:  # All agents left
+                self.dispatch_end_conversation(dispatcher, conversation_id)
+                return [{'type': 'reset'}]
 
         channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
         del channel_session_sla_map[channel_session['id']]
 
-        cancel_timer = unschedule.customer_sla(conversation['id'], channel_session['id'])
+        events.append(slot.set('channel_session_sla_map', channel_session_sla_map))
+        events.append(unschedule.customer_sla(conversation['id'], channel_session['id']))
 
-        return [cancel_timer, slot.set('channel_session_sla_map', channel_session_sla_map)]
+        return events
 
     @staticmethod
     def log_info(msg, conversation_id):
         logging.info('[CHANNEL_SESSION_ENDED] | conversation = [' + conversation_id + '] - ' + msg)
+
+    def dispatch_cancel_resource(self, dispatcher, conversation_id):
+        self.log_info("Customer left and Agent was requested, dispatching CANCEL_RESOURCE bot-action", conversation_id)
+        dispatcher.action('CANCEL_RESOURCE', {"reasonCode": "CANCELLED"})
+
+    def dispatch_end_conversation(self, dispatcher, conversation_id):
+        self.log_info("Customer and Agent(s) left the conversation, ending conversation", conversation_id)
+        dispatcher.action('END_CONVERSATION')
