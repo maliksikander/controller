@@ -13,7 +13,7 @@ class ActionMessage:
 
         events = []
 
-        agent_state = Utility.get_key(slots, "agent_state")
+        agent_state = Utility.get_key(slots, "agent_state", Utility.create_agent_state('not_requested', None))
         routing_mode = Utility.get_routing_mode_from(conversation['channelSession'])
 
         if name == 'FIND_AGENT':
