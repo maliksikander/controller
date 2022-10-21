@@ -27,8 +27,11 @@ class AgentUnSubscribed:
                 return [{'type': 'reset'}]
             else:  # Customer is still present
                 self.if_bot_in_conversation_make_it_primary(dispatcher, conversation)
-
                 events = self.schedule_inactivity_timer(slots, conversation)
+
+                if agent_state['state'] == 'requested' and direction == 'DIRECT_TRANSFER':
+                    return events
+
                 routing_mode = Utility.get_routing_mode_from(conversation['channelSession'])
                 reason_code = Utility.get_key(slots, 'agentSubUnSubReason')
 
