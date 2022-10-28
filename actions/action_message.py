@@ -19,11 +19,10 @@ class ActionMessage:
         if name == 'FIND_AGENT':
             if routing_mode != 'PUSH' or agent_state['state'] == 'requested':
                 return []
-            agent_state = Utility.create_agent_state('requested', 'INBOUND')
-            events.append(slot.set("agent_state", agent_state))
+
+            events.append(slot.set("agent_state", Utility.create_agent_state('requested', 'INBOUND')))
 
         dispatcher.action(name, data)
-
         return events
 
     @staticmethod

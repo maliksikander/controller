@@ -15,7 +15,9 @@ class ChannelSessionEnded:
         events = []
 
         if not channel_session_list:  # Customer left
-            if Utility.get_key(slots, 'agent_state')['state'] == 'requested':
+            agent_state = Utility.get_key(slots, 'agent_state', Utility.create_agent_state('not_requested', None))
+
+            if agent_state['state'] == 'requested':
                 self.dispatch_cancel_resource(dispatcher, conversation_id)
                 events.append(slot.set('agent_state', Utility.create_agent_state('not_requested', None)))
 

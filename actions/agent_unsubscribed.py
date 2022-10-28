@@ -16,7 +16,7 @@ class AgentUnSubscribed:
         self.log_info('Number of Agents = ['+str(len(cc_user_list))+']', conversation_id)
 
         if not cc_user_list:  # All agents left
-            agent_state = Utility.get_key(slots, 'agent_state')
+            agent_state = Utility.get_key(slots, 'agent_state', Utility.create_agent_state('not_requested', None))
             direction = agent_state['direction']
 
             if agent_state['state'] == 'requested' and direction == 'DIRECT_CONFERENCE':
