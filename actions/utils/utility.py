@@ -93,3 +93,12 @@ class Utility:
             "state": state,
             "direction": direction
         }
+
+    @staticmethod
+    def get_call_legs(slots, channel_session_id):
+        legs = Utility.get_key(slots, 'legs', {})
+
+        if legs.get(channel_session_id) is None:
+            legs[channel_session_id] = []
+
+        return legs

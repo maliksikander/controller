@@ -1,3 +1,5 @@
+from .call_leg_ended import CallLegEnded
+from .call_leg_started import CallLegStarted
 from .conversation_started import ConversationStarted
 from .agent_ewt import AgentEwt
 from .agent_message import AgentMessage
@@ -32,6 +34,8 @@ actions = {
     'BOT_MESSAGE': BotMessage(),
     'NO_AGENT_AVAILABLE': NoAgentAvailable(),
     'TASK_ENQUEUED': TaskEnqueued(),
+    'CALL_LEG_STARTED': CallLegStarted(),
+    'CALL_LEG_ENDED': CallLegEnded(),
     'end_chat': EndChat(),
     'customer_sla': CustomerSla(),
     'default': Default()
