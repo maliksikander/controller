@@ -34,7 +34,8 @@ class CallLegStarted:
 
         dispatcher.action('ASSIGN_AGENT', {
             'agent': agent_id,
-            'channelSession': channel_session
+            'channelSession': channel_session,
+            'type': 'CISCO_VOICE'
         })
 
         return events

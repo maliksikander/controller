@@ -25,7 +25,8 @@ class AgentOutbound:
 
         dispatcher.action('ASSIGN_AGENT', {
             'agent': agent_id,
-            'channelSession': channel_session
+            'channelSession': channel_session,
+            'type': 'AGENT_OUTBOUND'
         })
         return []
 
