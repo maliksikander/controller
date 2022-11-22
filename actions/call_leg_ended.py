@@ -10,9 +10,10 @@ class CallLegEnded:
         self.log_info("Intent received", conversation_id)
 
         call_leg_ended_dto = Utility.get_key(slots, 'callLegEndedDto')
-        channel_session = Utility.get_channel_session_by_id(call_leg_ended_dto['dialog']['id'], conversation_id)
-        agent_id = call_leg_ended_dto['agent']['id']
+        channel_session_id = str(call_leg_ended_dto['channelSessionId'])
+        agent_id = str(call_leg_ended_dto['agent']['id'])
 
+        channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation_id)
         legs = Utility.get_call_legs(slots, channel_session['id'])
         events = []
 

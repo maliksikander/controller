@@ -11,7 +11,7 @@ class CallLegStarted:
 
         call_leg_started_dto = Utility.get_key(slots, 'callLegStartedDto')
 
-        channel_session_id = call_leg_started_dto['dialog']['id']
+        channel_session_id = str(call_leg_started_dto['channelSessionId'])
         channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation)
 
         # Return if associated voice channel session is not present
@@ -22,7 +22,7 @@ class CallLegStarted:
         # Stop Customer Inactivity Timer if running
         events = self.stop_inactivity_timer_if_running(slots, conversation_id, channel_session_id)
 
-        agent_id = call_leg_started_dto['agent']['id']
+        agent_id = str(call_leg_started_dto['agent']['id'])
         legs = Utility.get_call_legs(slots, channel_session_id)
 
         if self.is_agent_present(legs, channel_session_id, agent_id):
@@ -47,8 +47,8 @@ class CallLegStarted:
     @staticmethod
     def create_leg(call_leg_started_dto):
         return {
-            "leg_id": call_leg_started_dto['leg'],
-            "agent_id": call_leg_started_dto['agent']['id']
+            "leg_id": str(call_leg_started_dto['leg']),
+            "agent_id": str(call_leg_started_dto['agent']['id'])
         }
 
     @staticmethod
