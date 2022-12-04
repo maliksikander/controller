@@ -13,7 +13,7 @@ class CallLegEnded:
         channel_session_id = str(call_leg_ended_dto['channelSessionId'])
         agent_id = str(call_leg_ended_dto['agent']['id'])
 
-        channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation_id)
+        channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation)
         legs = Utility.get_call_legs(slots, channel_session['id'])
         events = []
 
