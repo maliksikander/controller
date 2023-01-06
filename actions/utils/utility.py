@@ -93,3 +93,12 @@ class Utility:
             "state": state,
             "direction": direction
         }
+
+    @staticmethod
+    def get_assign_agent_payload(agent_id, channel_session, direction, update_task):
+        return {
+            'agent': agent_id,
+            'channelSession': channel_session,
+            'direction': direction,
+            'updateTask': update_task
+        }

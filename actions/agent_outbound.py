@@ -23,11 +23,8 @@ class AgentOutbound:
             self.log_info('Agent: ' + str(agent_id) + ' already exist in this conversation', conversation_id)
             return []
 
-        dispatcher.action('ASSIGN_AGENT', {
-            'agent': agent_id,
-            'channelSession': channel_session,
-            'type': 'AGENT_OUTBOUND'
-        })
+        dispatcher.action('ASSIGN_AGENT', Utility.get_assign_agent_payload(agent_id, channel_session,
+                                                                           'OUTBOUND', False))
         return []
 
     @staticmethod

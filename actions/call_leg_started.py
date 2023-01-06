@@ -25,11 +25,8 @@ class CallLegStarted:
             return []
 
         self.log_info('Dispatching ASSIGN_AGENT action', conversation_id)
-        dispatcher.action('ASSIGN_AGENT', {
-            'agent': agent_id,
-            'channelSession': channel_session,
-            'type': 'CISCO_VOICE'
-        })
+        dispatcher.action('ASSIGN_AGENT', Utility.get_assign_agent_payload(agent_id, channel_session,
+                                                                           call_leg_started_dto['reasonCode'], True))
         return []
 
     @staticmethod
