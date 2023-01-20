@@ -16,7 +16,7 @@ from .no_agent_available import NoAgentAvailable
 from .task_enqueued import TaskEnqueued
 from .end_chat import EndChat
 from .default import Default
-
+from .task_state_changed import TaskStateChanged
 
 actions = {
     'CONVERSATION_STARTED': ConversationStarted(),
@@ -34,6 +34,7 @@ actions = {
     'NO_AGENT_AVAILABLE': NoAgentAvailable(),
     'TASK_ENQUEUED': TaskEnqueued(),
     'CALL_LEG_STARTED': CallLegStarted(),
+    'TASK_STATE_CHANGED': TaskStateChanged(),
     'end_chat': EndChat(),
     'customer_sla': CustomerSla(),
     'default': Default()
