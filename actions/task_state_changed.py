@@ -1,5 +1,6 @@
 import logging
 from .utils.utility import Utility
+from .utils.events import slot
 
 
 class TaskStateChanged:
@@ -13,7 +14,7 @@ class TaskStateChanged:
         if task_state['name'] == 'CLOSED' and task_state['reasonCode'] == 'FORCE_CLOSED':
             dispatcher.text('Your chat has ended due to technical issues. Please come back later at a convenient time')
 
-        return []
+        return [slot.set('agent_state', Utility.create_agent_state('not_requested', None))]
 
     @staticmethod
     def log_info(msg, conversation_id):
