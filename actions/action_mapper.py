@@ -1,3 +1,4 @@
+from .assign_resource_requested import AssignResourceRequested
 from .call_leg_started import CallLegStarted
 from .conversation_started import ConversationStarted
 from .agent_ewt import AgentEwt
@@ -35,6 +36,7 @@ actions = {
     'TASK_ENQUEUED': TaskEnqueued(),
     'CALL_LEG_STARTED': CallLegStarted(),
     'TASK_STATE_CHANGED': TaskStateChanged(),
+    'ASSIGN_RESOURCE_REQUESTED': AssignResourceRequested(),
     'end_chat': EndChat(),
     'customer_sla': CustomerSla(),
     'default': Default()
