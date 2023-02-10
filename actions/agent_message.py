@@ -10,7 +10,10 @@ class AgentMessage:
         self.log_info("Agent message is received", conversation_id)
 
         cim_message = Utility.get_key(slots, 'cimMessage')
-        channel_session = cim_message['header']['channelSession']
+
+        channel_session_id = str(cim_message['header']['channelSessionId'])
+        channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation)
+
         channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
         
         if channel_session is None:

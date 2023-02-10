@@ -12,7 +12,9 @@ class CustomerMessage:
 
         self.log_info('Customer Message Received: ' + message, conversation_id)
 
-        channel_session = cim_message['header']['channelSession']
+        channel_session_id = str(cim_message['header']['channelSessionId'])
+        channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation)
+
         channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
         
         events = self.schedule_timers_for_other_sessions(conversation, channel_session, channel_session_sla_map)

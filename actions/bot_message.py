@@ -10,7 +10,9 @@ class BotMessage:
         self.log_info("intent received", conversation_id)
 
         cim_message = Utility.get_key(slots, 'cimMessage')
-        channel_session = cim_message['header']['channelSession']
+
+        channel_session_id = str(cim_message['header']['channelSessionId'])
+        channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation)
 
         if channel_session is None:
             self.log_info("Channel Session not found, returning...", conversation_id)
