@@ -13,8 +13,14 @@ class TaskStateChanged:
         self.log_info("Request received - TaskDto: " + str(task_dto), conversation['id'])
 
         task_state = task_dto['state']
+
         if task_state['name'] == 'CLOSED' and task_state['reasonCode'] == 'FORCE_CLOSED':
-            dispatcher.text('Your chat has ended due to technical issues. Please come back later at a convenient time')
+            task_type = task_dto['type']
+
+            if not (task_type['direction'] == 'DIRECT_CONFERENCE' and task_type['mode'] == 'QUEUE'):
+                dispatcher.text('Your chat has ended due to technical issues. '
+                                'Please come back later at a convenient time')
+
             return [slot.set('agent_state', Utility.create_agent_state('not_requested', None))]
 
         return []
