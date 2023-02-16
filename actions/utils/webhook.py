@@ -6,7 +6,7 @@ API_PATH = "http://ef-conversation-manager-svc.expertflow.svc:8080/controller-we
 
 def post_channel_session_expired(conversation_id, channel_session):
     request_body = {
-        "channelSession": channel_session,
+        "conversationId": conversation_id,
         "messages": [
             {
                 "body": {
