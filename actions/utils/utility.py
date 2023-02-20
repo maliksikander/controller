@@ -102,3 +102,11 @@ class Utility:
             'direction': direction,
             'updateTask': update_task
         }
+
+    @staticmethod
+    def get_find_agent_payload(queue_name, queue_type, offer_to_agent):
+        return {
+            "queue": queue_name,
+            "type": queue_type,
+            "offerToAgent": offer_to_agent
+        }

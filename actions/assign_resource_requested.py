@@ -17,6 +17,13 @@ class AssignResourceRequested:
             return []
 
         dispatcher.action('FIND_AGENT', self.get_find_agent_data(request_payload['queue']))
+
+        queue = request_payload['queue']
+        if queue:
+            dispatcher.action('FIND_AGENT', Utility.get_find_agent_payload(queue['name'], queue['type'], False))
+        else:
+            dispatcher.action('FIND_AGENT', Utility.get_find_agent_payload(None, None, False))
+
         return [slot.set("agent_state", Utility.create_agent_state('requested', 'INBOUND'))]
 
     @staticmethod
