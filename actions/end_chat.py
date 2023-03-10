@@ -9,13 +9,11 @@ class EndChat:
         channel_session = Utility.get_latest_channel_session(conversation)
 
         if channel_session is None:
-            self.log_info("ChannelSession not found, will not post channel_session_expired", conversation_id)
-        else:
-            self.log_info("Posting CHANNEL_SESSION_EXPIRED bot-action", conversation_id)
-            dispatcher.action('CHANNEL_SESSION_EXPIRED', {
-                "channelSession": channel_session
-            })
+            self.log_info("ChannelSession not found, will not post REMOVE_CHANNEL_SESSION", conversation_id)
+            return []
 
+        self.log_info("Posting REMOVE_CHANNEL_SESSION bot-action", conversation_id)
+        dispatcher.action('REMOVE_CHANNEL_SESSION', {"channelSession": channel_session, "reasonCode": "FORCE_CLOSED"})
         return []
 
     @staticmethod

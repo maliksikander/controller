@@ -1,43 +1,19 @@
-from .assign_resource_requested import AssignResourceRequested
-from .call_leg_started import CallLegStarted
+from .channel_session_expired import ChannelSessionExpired
 from .conversation_started import ConversationStarted
-from .agent_ewt import AgentEwt
-from .agent_message import AgentMessage
-from .agent_outbound import AgentOutbound
-from .agent_reserved import AgentReserved
 from .agent_subscribed import AgentSubscribed
 from .agent_unsubscribed import AgentUnSubscribed
 from .channel_session_started import ChannelSessionStarted
-from .channel_session_ended import ChannelSessionEnded
-from .customer_message import CustomerMessage
-from .customer_sla import CustomerSla
-from .action_message import ActionMessage
-from .bot_message import BotMessage
-from .no_agent_available import NoAgentAvailable
-from .task_enqueued import TaskEnqueued
 from .end_chat import EndChat
 from .default import Default
 from .task_state_changed import TaskStateChanged
 
 actions = {
     'CONVERSATION_STARTED': ConversationStarted(),
-    'AGENT_EWT': AgentEwt(),
-    'AGENT_MESSAGE': AgentMessage(),
-    'AGENT_OUTBOUND': AgentOutbound(),
-    'AGENT_RESERVED': AgentReserved(),
     'AGENT_SUBSCRIBED': AgentSubscribed(),
     'AGENT_UNSUBSCRIBED': AgentUnSubscribed(),
     'CHANNEL_SESSION_STARTED': ChannelSessionStarted(),
-    'CHANNEL_SESSION_ENDED': ChannelSessionEnded(),
-    'CUSTOMER_MESSAGE': CustomerMessage(),
-    'ACTION_MESSAGE': ActionMessage(),
-    'BOT_MESSAGE': BotMessage(),
-    'NO_AGENT_AVAILABLE': NoAgentAvailable(),
-    'TASK_ENQUEUED': TaskEnqueued(),
-    'CALL_LEG_STARTED': CallLegStarted(),
+    'CHANNEL_SESSION_EXPIRED': ChannelSessionExpired(),
     'TASK_STATE_CHANGED': TaskStateChanged(),
-    'ASSIGN_RESOURCE_REQUESTED': AssignResourceRequested(),
     'end_chat': EndChat(),
-    'customer_sla': CustomerSla(),
     'default': Default()
 }

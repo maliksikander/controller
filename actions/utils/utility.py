@@ -1,24 +1,14 @@
-from typing import List
-
-
 class Utility:
     @staticmethod
-    def is_exist_in_list(list: List[dict], key: str, key_type: str = 'id'):
-        for item in list:
-            if item[key_type] == key:
-                return True
-        return False
-
-    @staticmethod
-    def get_from_list(list: List[dict], key: str, key_type: str = 'id', default = None):
-        return next((x for x in list if x[key_type] == key), default)
-
-    @staticmethod
-    def get_key(object: dict, key: str, default = None):
-        if key in object.keys():
-            return object[key]
+    def get_key(obj: dict, key: str, default=None):
+        if key in obj.keys():
+            return obj[key]
         else:
             return default
+
+    @staticmethod
+    def get_routing_mode(conversation):
+        return str(conversation['channelSession']['channel']['channelConfig']['routingPolicy']['routingMode'])
     
     @staticmethod
     def get_latest_channel_session(conversation: dict):
@@ -26,17 +16,10 @@ class Utility:
             return conversation['metadata']['lastUsedChannelSession']
         except KeyError:
             return None
-    
+
     @staticmethod
-    def get_inactivity_timeout(channel_session):
-        return channel_session['channel']['channelConfig']['customerActivityTimeout']
-    
-    @staticmethod
-    def get_routing_mode_from(channel_session: dict):
-        try:
-            return channel_session['channel']['channelConfig']['routingPolicy']['routingMode']
-        except KeyError:
-            return 'PUSH'
+    def is_customer_present(conversation):
+        return len(Utility.get_channel_sessions(conversation)) > 0
 
     @staticmethod
     def get_agent_by_id(agent_id, conversation):
@@ -88,25 +71,15 @@ class Utility:
         return None
 
     @staticmethod
-    def create_agent_state(state, direction):
-        return {
-            "state": state,
-            "direction": direction
-        }
+    def dispatch_flushed_task_msg(dispatcher, task, msg):
+        if task['state']['name'] == 'CLOSED' and task['state']['reasonCode'] == 'FORCE_CLOSED':
+            task_type = task['type']
+            if not (task_type['direction'] == 'DIRECT_CONFERENCE' and task_type['mode'] == 'QUEUE'):
+                dispatcher.text(msg)
 
     @staticmethod
-    def get_assign_agent_payload(agent_id, channel_session, direction, update_task):
-        return {
-            'agent': agent_id,
-            'channelSession': channel_session,
-            'direction': direction,
-            'updateTask': update_task
-        }
-
-    @staticmethod
-    def get_find_agent_payload(queue_name, queue_type, offer_to_agent):
-        return {
-            "queue": queue_name,
-            "type": queue_type,
-            "offerToAgent": offer_to_agent
-        }
+    def change_bot_participant_role(role, dispatcher, conversation):
+        bot_participant = Utility.get_bot_participant(conversation)
+        if bot_participant is not None and bot_participant['role'] != role:
+            bot_id = bot_participant['participant']['id']
+            dispatcher.action('CHANGE_PARTICIPANT_ROLE', {"participantId": bot_id, "role": role})
