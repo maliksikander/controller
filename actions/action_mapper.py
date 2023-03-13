@@ -1,3 +1,5 @@
+from .assign_resource_requested import AssignResourceRequested
+from .call_leg_started import CallLegStarted
 from .conversation_started import ConversationStarted
 from .agent_ewt import AgentEwt
 from .agent_message import AgentMessage
@@ -12,8 +14,10 @@ from .customer_sla import CustomerSla
 from .action_message import ActionMessage
 from .bot_message import BotMessage
 from .no_agent_available import NoAgentAvailable
-from end_chat import EndChat
-
+from .task_enqueued import TaskEnqueued
+from .end_chat import EndChat
+from .default import Default
+from .task_state_changed import TaskStateChanged
 
 actions = {
     'CONVERSATION_STARTED': ConversationStarted(),
@@ -29,6 +33,11 @@ actions = {
     'ACTION_MESSAGE': ActionMessage(),
     'BOT_MESSAGE': BotMessage(),
     'NO_AGENT_AVAILABLE': NoAgentAvailable(),
+    'TASK_ENQUEUED': TaskEnqueued(),
+    'CALL_LEG_STARTED': CallLegStarted(),
+    'TASK_STATE_CHANGED': TaskStateChanged(),
+    'ASSIGN_RESOURCE_REQUESTED': AssignResourceRequested(),
     'end_chat': EndChat(),
     'customer_sla': CustomerSla(),
+    'default': Default()
 }

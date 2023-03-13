@@ -1,7 +1,7 @@
 import logging
 
 from .utils.utility import Utility
-from .utils.events import schedule, unschedule
+from .utils.events import schedule, unschedule, slot
 
 
 class CustomerMessage:
@@ -12,24 +12,15 @@ class CustomerMessage:
 
         self.log_info('Customer Message Received: ' + message, conversation_id)
 
-        channel_session = cim_message['header']['channelSession']
-        channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
+        channel_session_id = str(cim_message['header']['channelSessionId'])
+        channel_session = Utility.get_channel_session_by_id(channel_session_id, conversation)
 
-        cc_user_list = Utility.get_agents(conversation)
-        agents_present_in_conversation = cc_user_list is not None and len(cc_user_list) > 0
+        channel_session_sla_map = Utility.get_key(slots, 'channel_session_sla_map', {})
         
         events = self.schedule_timers_for_other_sessions(conversation, channel_session, channel_session_sla_map)
         events.append(unschedule.customer_sla(conversation_id, channel_session['id']))
-
-        if not agents_present_in_conversation:
-            routing_mode = Utility.get_routing_mode_from(channel_session)
-
-            if routing_mode == 'PUSH' and Utility.get_key(slots, 'agent_state') == 'requested':
-                dispatcher.text('An agent has been requested for this conversation, '
-                                'he/she will join you shortly. Please wait!')
-            elif routing_mode == 'PULL':
-                dispatcher.text('Bot could not understand your message, all relevant agents have been notified, '
-                                'agent(s) will join you shortly. Please wait!')
+        channel_session_sla_map[channel_session['id']] = False
+        events.append(slot.set('channel_session_sla_map', channel_session_sla_map))
         
         return events
 
@@ -46,6 +37,7 @@ class CustomerMessage:
             if not Utility.get_key(channel_session_sla_map, c_session['id'], False):
                 inactivity_timeout = Utility.get_inactivity_timeout(c_session)
                 events.append(schedule.customer_sla(conversation['id'], c_session['id'], inactivity_timeout))
+                channel_session_sla_map[c_session['id']] = True
 
         return events
 

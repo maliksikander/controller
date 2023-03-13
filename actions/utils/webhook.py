@@ -1,7 +1,7 @@
 import logging
 import requests
 
-API_PATH = "http://conversation-manager:8080/controller-webhook"
+API_PATH = "http://ef-conversation-manager-svc.expertflow.svc:8080/controller-webhook"
 
 
 def post_channel_session_expired(conversation_id, channel_session):

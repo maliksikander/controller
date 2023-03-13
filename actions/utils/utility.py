@@ -76,3 +76,37 @@ class Utility:
                 result.append(participant['participant'])
 
         return result
+
+    @staticmethod
+    def get_bot_participant(conversation):
+        participants = conversation['participants']
+
+        for participant in participants:
+            if participant['type'] == 'BOT':
+                return participant
+
+        return None
+
+    @staticmethod
+    def create_agent_state(state, direction):
+        return {
+            "state": state,
+            "direction": direction
+        }
+
+    @staticmethod
+    def get_assign_agent_payload(agent_id, channel_session, direction, update_task):
+        return {
+            'agent': agent_id,
+            'channelSession': channel_session,
+            'direction': direction,
+            'updateTask': update_task
+        }
+
+    @staticmethod
+    def get_find_agent_payload(queue_name, queue_type, offer_to_agent):
+        return {
+            "queue": queue_name,
+            "type": queue_type,
+            "offerToAgent": offer_to_agent
+        }
