@@ -6,6 +6,7 @@ from .channel_session_started import ChannelSessionStarted
 from .end_chat import EndChat
 from .default import Default
 from .task_state_changed import TaskStateChanged
+from .participant_role_change import ParticipantRoleChnage
 
 actions = {
     'CONVERSATION_STARTED': ConversationStarted(),
@@ -15,5 +16,6 @@ actions = {
     'CHANNEL_SESSION_EXPIRED': ChannelSessionExpired(),
     'TASK_STATE_CHANGED': TaskStateChanged(),
     'end_chat': EndChat(),
+    'PARTICIPANT_ROLE_CHANGED': ParticipantRoleChnage(),
     'default': Default()
 }
