@@ -83,3 +83,28 @@ class Utility:
         if bot_participant is not None and bot_participant['role'] != role:
             bot_id = bot_participant['participant']['id']
             dispatcher.action('CHANGE_PARTICIPANT_ROLE', {"participantId": bot_id, "role": role})
+
+    @staticmethod
+    def create_agent_state(state, direction):
+        return {
+            "state": state,
+            "direction": direction
+        }
+    
+    @staticmethod
+    def is_all_agent_in_wrap_up(conversation):
+        participants = conversation['participants']
+        agent_count = 0
+        agent_wrap_up_count = 0
+        if participants is None:
+            return False
+    
+        for p in participants:
+            if p['type'] == 'AGENT':
+                agent_count += 1
+                if p['role'] == 'WRAP_UP':
+                    agent_wrap_up_count += 1
+    
+        return agent_count > 0 and agent_count == agent_wrap_up_count
+
+      
