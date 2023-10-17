@@ -8,6 +8,10 @@ class ConversationStarted:
 
         channel_session = Utility.get_key(slots, 'channelSession')
 
+        if Utility.get_key(channel_session, 'latestIntent') == 'START_CONVERSATION':
+            self.log_info("Latest intent is equal to 'START_CONVERSATION', bot will not be added", conversation['id'])
+            return []
+
         bot_id = channel_session['channel']['channelConfig']['botId']
         role = 'PRIMARY'
 
