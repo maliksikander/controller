@@ -4,7 +4,7 @@ from .utils.events import slot
 
 
 
-class ParticipantRoleChnage:
+class ParticipantRoleChanged:
     def run(self, conversation, slots, dispatcher, metadata):
         if(Utility.is_all_agent_in_wrap_up(conversation)):
             self.log_info('intent received', conversation['id'])
