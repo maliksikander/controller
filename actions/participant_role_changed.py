@@ -17,4 +17,4 @@ class ParticipantRoleChanged:
 
     @staticmethod
     def log_info(msg, conversation_id):
-        logging.info('[PARTICIPANT_ROLE_CHANGE] | conversation = [' + str(conversation_id) + '] - ' + msg)
+        logging.info('[PARTICIPANT_ROLE_CHANGED] | conversation = [' + str(conversation_id) + '] - ' + msg)
