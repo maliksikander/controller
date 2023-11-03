@@ -73,7 +73,7 @@ class Utility:
     @staticmethod
     def dispatch_flushed_task_msg(dispatcher, task, msg):
         if task['state']['name'] == 'CLOSED' and task['state']['reasonCode'] == 'FORCE_CLOSED':
-            task_type = task['type']
+            task_type = task['activeMedia'][len(task['activeMedia']) - 1]['type']
             if not (task_type['direction'] == 'DIRECT_CONFERENCE' and task_type['mode'] == 'QUEUE'):
                 dispatcher.text(msg)
 
