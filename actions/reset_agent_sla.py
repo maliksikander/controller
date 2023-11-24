@@ -1,20 +1,19 @@
 import logging
-
 from .utils.utility import Utility
 
 
-class AgentSubscribed:
+class ResetAgentSla:
     def run(self, conversation, slots, dispatcher, metadata):
         self.log_info("intent received", conversation['id'])
 
-        # if customer is in the conversation
+      # if customer is in the conversation
         if Utility.is_customer_present(conversation):
-            Utility.change_bot_participant_role('ASSISTANT', dispatcher, conversation)
-            self.log_info("Starting agent sla timer", conversation['id'])
+            self.log_info("Customer exist, dispatching START_AGENT_SLA", conversation['id'])
             dispatcher.action('START_AGENT_SLA', Utility.get_sla_thresholds())
 
+        self.log_info("No customer exist in conversation. Agent SLA wont start.", conversation['id'])
         return []
 
     @staticmethod
     def log_info(msg, conversation_id):
-        logging.info('[AGENT_SUBSCRIBED] | conversation = [' + conversation_id + '] - ' + msg)
+        logging.info('[RESET_AGENT_SLA] | conversation = [' + conversation_id + '] - ' + msg)

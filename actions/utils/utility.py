@@ -61,6 +61,17 @@ class Utility:
         return result
 
     @staticmethod
+    def get_conversation_participants(conversation, participant_type):
+        participants = conversation['participants']
+        result = []
+
+        for participant in participants:
+            if participant['type'] == participant_type:
+                result.append(participant)
+
+        return result
+
+    @staticmethod
     def get_bot_participant(conversation):
         participants = conversation['participants']
 
@@ -90,7 +101,17 @@ class Utility:
             "state": state,
             "direction": direction
         }
-    
+
+    @staticmethod
+    def get_sla_thresholds():
+        return {
+            "thresholdLevels":[
+                {"thresholdPercentage": 50, "action": "CHANGE_COLOR"},
+                {"thresholdPercentage": 80, "action": "SHOW_POPUP"},
+                {"thresholdPercentage": 100, "action": "REMOVE_ALL_AGENTS"}
+            ]
+        }
+
     @staticmethod
     def is_all_agent_in_wrap_up(conversation):
         participants = conversation['participants']
@@ -98,13 +119,11 @@ class Utility:
         agent_wrap_up_count = 0
         if participants is None:
             return False
-    
+
         for p in participants:
             if p['type'] == 'AGENT':
                 agent_count += 1
                 if p['role'] == 'WRAP_UP':
                     agent_wrap_up_count += 1
-    
-        return agent_count > 0 and agent_count == agent_wrap_up_count
 
-      
+        return agent_count > 0 and agent_count == agent_wrap_up_count
