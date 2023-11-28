@@ -6,7 +6,7 @@ class TaskStateChanged:
     def run(self, conversation, slots, dispatcher, metadata):
         self.log_info("intent received", conversation['id'])
 
-        task = (Utility.get_key(slots, 'cimEvent'))['data']
+        task = (Utility.get_key(slots, 'cimEvent'))['data']['task']
         Utility.dispatch_flushed_task_msg(dispatcher, task, 'Your chat has ended due to technical issues. '
                                                             'Please come back later at a convenient time')
 
