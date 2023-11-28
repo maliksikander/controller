@@ -9,8 +9,6 @@ class CustomerMessage:
         if len(Utility.get_agents(conversation)) > 0:
             self.log_info("Agent exist in conversation, dispatch start", conversation['id'])
             dispatcher.action('START_AGENT_SLA', Utility.get_sla_thresholds())
-
-
             return[]
 
         self.log_info("No agent exist in conversation.", conversation['id'])
