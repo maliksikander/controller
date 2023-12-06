@@ -10,8 +10,6 @@ class AgentSubscribed:
         # if customer is in the conversation
         if Utility.is_customer_present(conversation):
             Utility.change_bot_participant_role('ASSISTANT', dispatcher, conversation)
-            self.log_info("Starting agent sla timer", conversation['id'])
-            dispatcher.action('START_AGENT_SLA', Utility.get_sla_thresholds())
 
         return []
 

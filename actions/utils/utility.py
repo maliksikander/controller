@@ -103,16 +103,6 @@ class Utility:
         }
 
     @staticmethod
-    def get_sla_thresholds():
-        return {
-            "thresholdLevels":[
-                {"thresholdPercentage": 50, "action": "CHANGE_COLOR"},
-                {"thresholdPercentage": 80, "action": "SHOW_POPUP"},
-                {"thresholdPercentage": 100, "action": "REMOVE_ALL_AGENTS"}
-            ]
-        }
-
-    @staticmethod
     def is_all_agent_in_wrap_up(conversation):
         participants = conversation['participants']
         agent_count = 0
