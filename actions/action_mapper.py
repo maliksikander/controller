@@ -7,6 +7,7 @@ from .end_chat import EndChat
 from .default import Default
 from .task_state_changed import TaskStateChanged
 from .participant_role_changed import ParticipantRoleChanged
+from .agent_sla_expired import AgentSlaExpired
 
 actions = {
     'CONVERSATION_STARTED': ConversationStarted(),
@@ -17,5 +18,6 @@ actions = {
     'TASK_STATE_CHANGED': TaskStateChanged(),
     'end_chat': EndChat(),
     'PARTICIPANT_ROLE_CHANGED': ParticipantRoleChanged(),
+    'AGENT_SLA_EXPIRED': AgentSlaExpired(),
     'default': Default()
 }

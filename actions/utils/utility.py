@@ -61,6 +61,17 @@ class Utility:
         return result
 
     @staticmethod
+    def get_conversation_participants(conversation, participant_type):
+        participants = conversation['participants']
+        result = []
+
+        for participant in participants:
+            if participant['type'] == participant_type:
+                result.append(participant)
+
+        return result
+
+    @staticmethod
     def get_bot_participant(conversation):
         participants = conversation['participants']
 
@@ -73,7 +84,7 @@ class Utility:
     @staticmethod
     def dispatch_flushed_task_msg(dispatcher, task, msg):
         if task['state']['name'] == 'CLOSED' and task['state']['reasonCode'] == 'FORCE_CLOSED':
-            task_type = task['type']
+            task_type = task['activeMedia'][len(task['activeMedia']) - 1]['type']
             if not (task_type['direction'] == 'DIRECT_CONFERENCE' and task_type['mode'] == 'QUEUE'):
                 dispatcher.text(msg)
 
@@ -90,7 +101,7 @@ class Utility:
             "state": state,
             "direction": direction
         }
-    
+
     @staticmethod
     def is_all_agent_in_wrap_up(conversation):
         participants = conversation['participants']
@@ -98,13 +109,11 @@ class Utility:
         agent_wrap_up_count = 0
         if participants is None:
             return False
-    
+
         for p in participants:
             if p['type'] == 'AGENT':
                 agent_count += 1
                 if p['role'] == 'WRAP_UP':
                     agent_wrap_up_count += 1
-    
-        return agent_count > 0 and agent_count == agent_wrap_up_count
 
-      
+        return agent_count > 0 and agent_count == agent_wrap_up_count
