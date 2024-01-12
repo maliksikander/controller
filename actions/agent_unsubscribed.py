@@ -7,6 +7,12 @@ class AgentUnSubscribed:
     def run(self, conversation, slots, dispatcher, metadata):
         self.log_info('intent received', conversation['id'])
 
+        room_mode = str((Utility.get_key(slots, 'cimEvent'))['roomInfo']['mode'])
+
+        if room_mode == "PRIVATE":
+            self.log_info("Room-mode: Private, Ignoring this intent", conversation['id'])
+            return []
+
         # if all agents left and customer still in conversation
         if not Utility.get_agents(conversation) and Utility.is_customer_present(conversation):
             Utility.change_bot_participant_role('PRIMARY', dispatcher, conversation)

@@ -7,6 +7,12 @@ class ChannelSessionStarted:
     def run(self, conversation, slots, dispatcher, metadata):
         self.log_info("intent received", conversation['id'])
 
+        room_mode = str((Utility.get_key(slots, 'cimEvent'))['roomInfo']['mode'])
+
+        if room_mode == "PRIVATE":
+            self.log_info("Room-mode: Private, Ignoring this intent", conversation['id'])
+            return []
+
         channel_session = (Utility.get_key(slots, 'cimEvent'))['data']
 
         # ChannelSession.latestIntent field is set in case of 'Agent-Outbound' and 'Voice',
