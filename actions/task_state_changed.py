@@ -4,12 +4,11 @@ from .utils.utility import Utility
 
 class TaskStateChanged:
     def run(self, conversation, slots, dispatcher, metadata):
-        self.log_info("intent received", conversation['id'])
+        room_info = (Utility.get_key(slots, 'cimEvent'))['roomInfo']
+        self.log_info("intent received", str(room_info['id']), conversation)
 
-        room_mode = str((Utility.get_key(slots, 'cimEvent'))['roomInfo']['mode'])
-
-        if room_mode == "PRIVATE":
-            self.log_info("Room-mode: Private, Ignoring this intent", conversation['id'])
+        if str(room_info['mode']) == "PRIVATE":
+            self.log_info("Room-mode: Private, Ignoring this intent", str(room_info['id']), conversation)
             return []
 
         task = (Utility.get_key(slots, 'cimEvent'))['data']['task']
@@ -19,5 +18,7 @@ class TaskStateChanged:
         return []
 
     @staticmethod
-    def log_info(msg, conversation_id):
-        logging.info('[TASK_STATE_CHANGED] | conversation = [' + conversation_id + '] - ' + msg)
+    def log_info(msg, room_id, conversation):
+        conversation_id = str(None if not conversation else conversation['id'])
+        logging.info(
+            '[TASK_STATE_CHANGED] | room = [' + room_id + '] | conversation = [' + conversation_id + '] - ' + msg)

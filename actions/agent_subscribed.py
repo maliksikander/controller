@@ -5,12 +5,11 @@ from .utils.utility import Utility
 
 class AgentSubscribed:
     def run(self, conversation, slots, dispatcher, metadata):
-        self.log_info("intent received", conversation['id'])
+        room_info = (Utility.get_key(slots, 'cimEvent'))['roomInfo']
+        self.log_info("intent received", str(room_info['id']), conversation)
 
-        room_mode = str((Utility.get_key(slots, 'cimEvent'))['roomInfo']['mode'])
-
-        if room_mode == "PRIVATE":
-            self.log_info("Room-mode: Private, Ignoring this intent", conversation['id'])
+        if str(room_info['mode']) == "PRIVATE":
+            self.log_info("Room-mode: Private, Ignoring this intent", str(room_info['id']), conversation)
             return []
 
         # if customer is in the conversation
@@ -20,5 +19,7 @@ class AgentSubscribed:
         return []
 
     @staticmethod
-    def log_info(msg, conversation_id):
-        logging.info('[AGENT_SUBSCRIBED] | conversation = [' + conversation_id + '] - ' + msg)
+    def log_info(msg, room_id, conversation):
+        conversation_id = str(None if not conversation else conversation['id'])
+        logging.info(
+            '[AGENT_SUBSCRIBED] | room = [' + room_id + '] | conversation = [' + conversation_id + '] - ' + msg)
