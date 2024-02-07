@@ -8,7 +8,7 @@ class ConversationPaused:
         self.log_info("intent received", str(room_info['id']), conversation)
 
         self.log_info("Dispatching the CONVERSATION_PAUSED message", str(room_info['id']), conversation)
-        dispatcher.text('The conversation is currently paused by the agent. We appreciate your patience,
+        dispatcher.text('The conversation is currently paused by the agent. We appreciate your patience, '
                         'the agent will get back to you as soon as possible.')
 
         return []

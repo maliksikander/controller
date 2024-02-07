@@ -11,7 +11,7 @@ class CustomerMessage:
 
         if conversation_state == "ON_HOLD":
             self.log_info("Dispatching the CONVERSATION_HOLD message", str(room_info['id']), conversation)
-            dispatcher.text('The conversation is currently paused by the agent. We appreciate your patience,
+            dispatcher.text('The conversation is currently paused by the agent. We appreciate your patience, '
                             'the agent will get back to you as soon as possible.')
 
         return []
