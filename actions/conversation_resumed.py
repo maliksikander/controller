@@ -12,8 +12,7 @@ class ConversationResumed:
 
         if reason not in ["AGENT_MESSAGE", "SYSTEM"]:
             self.log_info("Dispatching the CONVERSATION_RESUMED message", str(room_info['id']), conversation)
-            dispatcher.text('The conversation is now resumed. Agent will be back with you shortly to assist you. '
-                            'Thank you for your patience!')
+            dispatcher.text('The conversation is now resumed.')
 
         return []
 
