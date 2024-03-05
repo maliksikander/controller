@@ -1,9 +1,10 @@
 
 class schedule:
     @staticmethod
-    def customer_sla(room_id: str, channel_session_id: str, timeout: int):
+    def customer_sla(room_id: str, conversation: dict, channel_session_id: str, timeout: int):
         return {
             'type': 'schedule_a_reminder',
+            'conversation': conversation,
             'name': 'customer_sla' + '_' + room_id + '_' + channel_session_id,
             'intent': 'customer_sla',
             'entities': {'customer_sla_metadata': channel_session_id},
