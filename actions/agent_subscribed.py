@@ -16,6 +16,10 @@ class AgentSubscribed:
         if Utility.is_customer_present(conversation):
             Utility.change_bot_participant_role('ASSISTANT', dispatcher, conversation)
 
+        # if the criteria meets, than dispatch EXTERNAL_GADGET_REQUESTED
+        if True:
+            Utility.check_and_dispatch_open_gadget_action(conversation, dispatcher)
+
         return []
 
     @staticmethod
