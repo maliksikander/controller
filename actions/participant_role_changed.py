@@ -13,7 +13,7 @@ class ParticipantRoleChanged:
 
         if Utility.is_all_agent_in_wrap_up(conversation):
             direction = str((Utility.get_key(slots, 'cimEvent'))['data']['metadata']['reason'])
-            if direction != "DIRECT_TRANSFER":
+            if direction != "DIRECT_TRANSFER" and direction != "CONSULT_TRANSFER":
                 self.log_info("All agents in wrap-up, and direction is not direct-transfer, removing channel sessions",
                               str(room_info['id']), conversation)
                 for customer_channel_session in Utility.get_channel_sessions(conversation):
