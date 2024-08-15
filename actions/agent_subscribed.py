@@ -17,8 +17,9 @@ class AgentSubscribed:
             Utility.change_bot_participant_role('ASSISTANT', dispatcher, conversation)
 
         # if the criteria meets, than dispatch EXTERNAL_GADGET_REQUESTED
-        if True:
-            Utility.check_and_dispatch_open_gadget_action(conversation, dispatcher)
+        if Utility.THIRD_PARTY_GADGET_ENABLED:
+            agent_subscribed = (Utility.get_key(slots, 'cimEvent'))['data']
+            Utility.check_and_dispatch_open_gadget_action(conversation, agent_subscribed, dispatcher)
 
         return []
 

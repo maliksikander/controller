@@ -123,21 +123,24 @@ class Utility:
 
 
     @staticmethod
-    def prepare_open_gadget_data(conversation):
+    def prepare_open_gadget_data(conversation, agent_subscribed):
         service_identifier = conversation['channelSession']['channel']['serviceIdentifier']
+        agent_id = Utility.get_key(agent_subscribed, 'agentParticipant')['participant']['id']
 
-        if service_identifier == "1777":
-            id = "fc43389f-b9b6-4928-8cfb-6d65b4329180"
+        if service_identifier == "1122" or service_identifier == "1777":
+            gadget_id = "fc43389f-b9b6-4928-8cfb-6d65b4329180"
             url = "https://rawgit.com/start-angular/ani-theme/master/dist/#/dashboard/overview"
             title = "Dasboard Overview"
 
         elif service_identifier == "9999":
-            id = "2cfe1ea9-d2da-48ad-a347-5026ddb404c2"
+            gadget_id = "2cfe1ea9-d2da-48ad-a347-5026ddb404c2"
+            agent_id = None
             url = "https://rawgit.com/start-angular/ani-theme/master/dist/#/dashboard/reports"
             title = "Dasboard Reports"
 
         else:
-            id = "f46ba8b5-47a7-4450-8e62-ce31e9fd406a"
+            gadget_id = "f46ba8b5-47a7-4450-8e62-ce31e9fd406a"
+            agent_id = None
             url = "https://www.codecademy.com/learn/learn-how-to-code"
             title = "Codecademy"
 
@@ -145,7 +148,8 @@ class Utility:
             "action": "open",
             "gadgets": [
                 {
-                    "id": id,  # a version 4 random UUID.
+                    "gadgetId": gadget_id,  # a version 4 random UUID.
+                    "agentId": agent_id,
                     "title": title,
                     "value": url
                 }
@@ -160,7 +164,8 @@ class Utility:
             # Add the gadgets here as required.
             "gadgets": [
                 {
-                    "id": "fc43389f-b9b6-4928-8cfb-6d65b4329180", # a version 4 random UUID.
+                    "gadgetId": "fc43389f-b9b6-4928-8cfb-6d65b4329180", # a version 4 random UUID.
+                    "agentId": None,
                     "title": "unified-admin",
                     "value": "https://cim.expertflow.com/unified-admin"
                 }
@@ -169,11 +174,11 @@ class Utility:
         return data
 
     @staticmethod
-    def check_and_dispatch_open_gadget_action(conversation, dispatcher):
+    def check_and_dispatch_open_gadget_action(conversation, agent_subscribed, dispatcher):
 #        if Utility.is_service_identifier_valid(conversation):
 #            open_gadget_data = Utility.prepare_open_gadget_data(conversation)
 #            dispatcher.action('EXTERNAL_GADGET_REQUESTED', open_gadget_data)
-        open_gadget_data = Utility.prepare_open_gadget_data(conversation)
+        open_gadget_data = Utility.prepare_open_gadget_data(conversation, agent_subscribed)
         dispatcher.action('EXTERNAL_GADGET_REQUESTED', open_gadget_data)
 
     @staticmethod
