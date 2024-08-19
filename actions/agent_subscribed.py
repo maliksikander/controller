@@ -1,7 +1,7 @@
 import logging
 
 from .utils.utility import Utility
-
+from .utils.api import API
 
 class AgentSubscribed:
     def run(self, conversation, slots, dispatcher, metadata):
@@ -19,7 +19,10 @@ class AgentSubscribed:
         # if the criteria meets, than dispatch EXTERNAL_GADGET_REQUESTED
         if Utility.THIRD_PARTY_GADGET_ENABLED:
             agent_subscribed = (Utility.get_key(slots, 'cimEvent'))['data']
-            Utility.check_and_dispatch_open_gadget_action(conversation, agent_subscribed, dispatcher)
+            customer_identifier = Utility.get_latest_channel_session(conversation).get('channelData', {}).get('channelCustomerIdentifier', '')
+            agent_id = agent_subscribed.get('agentParticipant', {}).get('participant', {}).get('keycloakUser', {}).get('id', '')
+            encrypted_str = API.get_encrypted_str(customer_identifier, agent_id)
+            Utility.check_and_dispatch_open_gadget_action(conversation, agent_subscribed, dispatcher, customer_identifier, encrypted_str)
 
         return []
 

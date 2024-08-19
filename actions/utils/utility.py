@@ -123,13 +123,14 @@ class Utility:
 
 
     @staticmethod
-    def prepare_open_gadget_data(conversation, agent_subscribed):
+    def prepare_open_gadget_data(conversation, agent_subscribed, customer_identifier, encrypted_str):
         service_identifier = conversation['channelSession']['channel']['serviceIdentifier']
         agent_id = Utility.get_key(agent_subscribed, 'agentParticipant')['participant']['id']
 
         if service_identifier == "1122" or service_identifier == "1777":
             gadget_id = "fc43389f-b9b6-4928-8cfb-6d65b4329180"
-            url = "https://rawgit.com/start-angular/ani-theme/master/dist/#/dashboard/overview"
+            url = "http://onewindow.ptcl.net.pk/Login.aspx?PSTN=" + customer_identifier + "=" + encrypted_str
+            #url = "https://rawgit.com/start-angular/ani-theme/master/dist/#/dashboard/overview"
             title = "Dasboard Overview"
 
         elif service_identifier == "9999":
@@ -174,11 +175,11 @@ class Utility:
         return data
 
     @staticmethod
-    def check_and_dispatch_open_gadget_action(conversation, agent_subscribed, dispatcher):
+    def check_and_dispatch_open_gadget_action(conversation, agent_subscribed, dispatcher, customer_identifier, encrypted_str):
 #        if Utility.is_service_identifier_valid(conversation):
 #            open_gadget_data = Utility.prepare_open_gadget_data(conversation)
 #            dispatcher.action('EXTERNAL_GADGET_REQUESTED', open_gadget_data)
-        open_gadget_data = Utility.prepare_open_gadget_data(conversation, agent_subscribed)
+        open_gadget_data = Utility.prepare_open_gadget_data(conversation, agent_subscribed, customer_identifier, encrypted_str)
         dispatcher.action('EXTERNAL_GADGET_REQUESTED', open_gadget_data)
 
     @staticmethod
