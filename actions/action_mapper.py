@@ -25,12 +25,11 @@ actions = {
     'TASK_STATE_CHANGED': TaskStateChanged(),
     'end_chat': EndChat(),
     'PARTICIPANT_ROLE_CHANGED': ParticipantRoleChanged(),
-    'AGENT_SLA_EXPIRED': AgentSlaExpired(),
     'CONVERSATION_PAUSED': ConversationPaused(),
     'CUSTOMER_MESSAGE': CustomerMessage(),
     'CONVERSATION_RESUMED': ConversationResumed(),
     'NO_RESPONSE_ENTITY': NoResponseEntity(),
-    'TASK_ENQUEUED': TaskEnqueued()
+    'TASK_ENQUEUED': TaskEnqueued(),
     'AGENT_SLA_STARTED': AgentSlaStarted(),
     'CUSTOMER_SLA_STARTED': CustomerSlaStarted(),
     'CUSTOMER_SLA_EXPIRED': CustomerSlaExpired(),
