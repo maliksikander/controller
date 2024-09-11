@@ -15,7 +15,7 @@ from .customer_sla_started import CustomerSlaStarted
 from .customer_sla_expired import CustomerSlaExpired
 from .task_enqueued import TaskEnqueued
 from .no_response_entity import NoResponseEntity
-
+from .agent_mrd_interrupted import AgentMrdInterrupted
 actions = {
     'CONVERSATION_STARTED': ConversationStarted(),
     'AGENT_SUBSCRIBED': AgentSubscribed(),
@@ -34,4 +34,5 @@ actions = {
     'CUSTOMER_SLA_STARTED': CustomerSlaStarted(),
     'CUSTOMER_SLA_EXPIRED': CustomerSlaExpired(),
     'AGENT_SLA_EXPIRED': AgentSlaExpired(),
+    'AGENT_MRD_INTERRUPTED': AgentMrdInterrupted(),
 }
