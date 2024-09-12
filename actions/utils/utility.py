@@ -138,6 +138,12 @@ class Utility:
             agent_id = None
             url = "https://rawgit.com/start-angular/ani-theme/master/dist/#/dashboard/reports"
             title = "Dasboard Reports"
+        
+        elif service_identifier == "2000":
+            gadget_id = "2cfe1ea9-d2da-48ad-a347-5026ddb404c2"
+            agent_id = None
+            url = "https://rawgit.com/start-angular/ani-theme/master/dist/#/dashboard/reports"
+            title = "Dasboard Reports"
 
         else:
             gadget_id = "f46ba8b5-47a7-4450-8e62-ce31e9fd406a"
