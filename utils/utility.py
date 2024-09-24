@@ -1,4 +1,7 @@
 class Utility:
+
+    THIRD_PARTY_GADGET_ENABLED = True
+
     @staticmethod
     def get_key(obj: dict, key: str, default=None):
         if key in obj.keys():
@@ -9,7 +12,7 @@ class Utility:
     @staticmethod
     def get_routing_mode(conversation):
         return str(conversation['channelSession']['channel']['channelConfig']['routingPolicy']['routingMode'])
-    
+
     @staticmethod
     def get_latest_channel_session(conversation: dict):
         try:
@@ -117,3 +120,74 @@ class Utility:
                     agent_wrap_up_count += 1
 
         return agent_count > 0 and agent_count == agent_wrap_up_count
+
+
+    @staticmethod
+    def prepare_open_gadget_data(conversation, agent_subscribed):
+        service_identifier = conversation['channelSession']['channel']['serviceIdentifier']
+        agent_id = Utility.get_key(agent_subscribed, 'agentParticipant')['participant']['id']
+
+        if service_identifier == "1122" or service_identifier == "1777":
+            gadget_id = "fc43389f-b9b6-4928-8cfb-6d65b4329180"
+            url = "https://rawgit.com/start-angular/ani-theme/master/dist/#/dashboard/overview"
+            title = "Dasboard Overview"
+
+        elif service_identifier == "9999":
+            gadget_id = "2cfe1ea9-d2da-48ad-a347-5026ddb404c2"
+            agent_id = None
+            url = "https://rawgit.com/start-angular/ani-theme/master/dist/#/dashboard/reports"
+            title = "Dasboard Reports"
+
+        else:
+            gadget_id = "f46ba8b5-47a7-4450-8e62-ce31e9fd406a"
+            agent_id = None
+            url = "https://www.codecademy.com/learn/learn-how-to-code"
+            title = "Codecademy"
+
+        data = {
+            "action": "open",
+            "gadgets": [
+                {
+                    "gadgetId": gadget_id,  # a version 4 random UUID.
+                    "agentId": agent_id,
+                    "title": title,
+                    "value": url
+                }
+            ]
+        }
+        return data
+
+    @staticmethod
+    def prepare_close_gadget_data(conversation):
+        data = {
+            "action": "close",
+            # Add the gadgets here as required.
+            "gadgets": [
+                {
+                    "gadgetId": "fc43389f-b9b6-4928-8cfb-6d65b4329180", # a version 4 random UUID.
+                    "agentId": None,
+                    "title": "unified-admin",
+                    "value": "https://cim.expertflow.com/unified-admin"
+                }
+            ]
+        }
+        return data
+
+    @staticmethod
+    def check_and_dispatch_open_gadget_action(conversation, agent_subscribed, dispatcher):
+#        if Utility.is_service_identifier_valid(conversation):
+#            open_gadget_data = Utility.prepare_open_gadget_data(conversation)
+#            dispatcher.action('EXTERNAL_GADGET_REQUESTED', open_gadget_data)
+        open_gadget_data = Utility.prepare_open_gadget_data(conversation, agent_subscribed)
+        dispatcher.action('EXTERNAL_GADGET_REQUESTED', open_gadget_data)
+
+    @staticmethod
+    def check_and_dispatch_close_gadget_action(conversation, dispatcher):
+        if Utility.is_service_identifier_valid(conversation):
+            close_gadget_data = Utility.prepare_close_gadget_data(conversation)
+            dispatcher.action('EXTERNAL_GADGET_REQUESTED', close_gadget_data)
+
+    @staticmethod
+    def is_service_identifier_valid(conversation):
+        service_identifier = conversation['channelSession']['channel']['serviceIdentifier']
+        return service_identifier == '1122'

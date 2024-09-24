@@ -1,6 +1,7 @@
 import logging
 
 from .utils.utility import Utility
+from .utils.api import API
 
 
 class AgentUnSubscribed:
@@ -20,9 +21,9 @@ class AgentUnSubscribed:
             reason_code = str((Utility.get_key(slots, 'cimEvent'))['data']['reason'])
 
             # If agent was unsubscribed by system, find another agent on this conversation
-            if routing_mode == 'PUSH' and (reason_code == 'FORCED_LOGOUT' or reason_code == 'SLA_EXPIRED' or reason_code == 'MRD_INTERRUPTED'):
+            if routing_mode == 'PUSH' and (reason_code == 'FORCED_LOGOUT' or reason_code == 'SLA_EXPIRED'):
                 self.log_info('Dispatching FIND_AGENT', str(room_info['id']), conversation)
-                dispatcher.action('FIND_AGENT')
+                dispatcher.action('FIND_AGENT', {'lastAgentId': API.get_last_agent(conversation['customer']['_id'])})
 
         return []
 
