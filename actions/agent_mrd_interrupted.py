@@ -11,8 +11,7 @@ class AgentMrdInterrupted:
 
         mrd_interrupted = (Utility.get_key(slots, 'cimEvent'))['data']
 
-        if str(mrd_interrupted['mrdId']) == '62f9e360ea5311eda05b0242' or str(mrd_interrupted['mrdId'])
-        == '20316843be924c8ab4f57a7a' :
+        if str(mrd_interrupted['mrdId']) == '62f9e360ea5311eda05b0242' or str(mrd_interrupted['mrdId']) == '20316843be924c8ab4f57a7a':
             self.log_info("MRD is of voice type, REMOVE_ALL_AGENTS will not be invoked.", str(room_info['id']),
             conversation)
             return []
