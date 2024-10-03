@@ -16,6 +16,10 @@ class AgentSubscribed:
         if Utility.is_customer_present(conversation):
             Utility.change_bot_participant_role('ASSISTANT', dispatcher, conversation)
 
+        if Utility.THIRD_PARTY_GADGET_ENABLED:
+            agent_subscribed = (Utility.get_key(slots, 'cimEvent'))['data']
+            Utility.check_and_dispatch_open_gadget_action(conversation, agent_subscribed, dispatcher)
+
         return []
 
     @staticmethod

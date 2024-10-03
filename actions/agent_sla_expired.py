@@ -12,7 +12,7 @@ class AgentSlaExpired:
             return []
 
         agent_participants = Utility.get_conversation_participants(conversation, 'AGENT')
-        dispatcher.action('REMOVE_ALL_AGENTS', {"agentParticipants": agent_participants})
+        dispatcher.action('REMOVE_ALL_AGENTS', {"agentParticipants": agent_participants, "reason": "SLA_EXPIRED"})
 
         return []
 
