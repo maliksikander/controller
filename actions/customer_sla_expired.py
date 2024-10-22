@@ -6,7 +6,6 @@ from .utils.utility import Utility
 class CustomerSlaExpired:
     def run(self, conversation, slots, dispatcher, metadata):
         room_info = (Utility.get_key(slots, 'cimEvent'))['roomInfo']
-        self.log_info("intent received", str(room_info['id']), conversation)
 
         channel_session = slots['channelSession']
         dispatcher.action('REMOVE_CHANNEL_SESSION', {"channelSession": channel_session, "reasonCode": "FORCE_CLOSED"})
