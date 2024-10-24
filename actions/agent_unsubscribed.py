@@ -7,11 +7,33 @@ from .utils.api import API
 class AgentUnSubscribed:
     def run(self, conversation, slots, dispatcher, metadata):
         room_info = (Utility.get_key(slots, 'cimEvent'))['roomInfo']
+        reason_code = str((Utility.get_key(slots, 'cimEvent'))['data']['reason'])
+        agent_role = str((Utility.get_key(slots, 'cimEvent'))['data']['agentParticipant']['role'])
+
+
         self.log_info("intent received", str(room_info['id']), conversation)
 
         if str(room_info['mode']) == "PRIVATE":
             self.log_info("Room-mode: Private, Ignoring this intent", str(room_info['id']), conversation)
             return []
+
+        participants = conversation.get('participants', [])
+
+        # Get channel sessions of 'CUSTOMER' type
+        customer_channel_sessions = [
+            participant.get('participant') for participant in participants
+            if participant.get('type') == 'CUSTOMER'
+        ]
+
+        for customer_channel_session in customer_channel_sessions:
+            mrd_id = customer_channel_session['channel']['channelType']['mediaRoutingDomain']
+
+            # If mrd_id matches and the reason is 'FORCED_LOGOUT', dispatch action
+            if mrd_id == '62f9e360ea5311eda05b0242' and agent_role == 'PRIMARY' and reason_code == 'FORCED_LOGOUT':
+                self.log_info("Agent forcefully logged out on voice channel, dispatching REMOVE_CHANNEL_SESSION", str(room_info['id']), conversation)
+                dispatcher.action('REMOVE_CHANNEL_SESSION', {"channelSession": customer_channel_session, "reasonCode": "FORCE_CLOSED"})
+                return []
+
 
         # if all agents left and customer still in conversation
         if not Utility.get_agents(conversation) and Utility.is_customer_present(conversation):
