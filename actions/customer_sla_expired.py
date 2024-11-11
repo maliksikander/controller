@@ -9,7 +9,7 @@ class CustomerSlaExpired:
         self.log_info("intent received", str(room_info['id']), conversation)
 
         channel_session = slots['channelSession']
-        dispatcher.action('REMOVE_CHANNEL_SESSION', {"channelSession": channel_session, "reasonCode": "FORCE_CLOSED"})
+        dispatcher.action('REMOVE_CHANNEL_SESSION', {"channelSession": channel_session, "reasonCode": "INACTIVITY"})
         return []
 
     @staticmethod
