@@ -1,6 +1,3 @@
-import logging
-
-
 class TaskEnqueued:
   def run(self, conversation, slots, dispatcher, metadata):
     media = {}
