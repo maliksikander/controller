@@ -4,7 +4,6 @@ from .utils.utility import Utility
 
 class ConversationStarted:
     def run(self, conversation, slots, dispatcher, metadata):
-        self.log_info("intent received", conversation['id'])
 
         channel_session = Utility.get_key(slots, 'channelSession')
 
