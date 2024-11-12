@@ -8,7 +8,7 @@ class CustomerSlaExpired:
         room_info = (Utility.get_key(slots, 'cimEvent'))['roomInfo']
 
         channel_session = slots['channelSession']
-        dispatcher.action('REMOVE_CHANNEL_SESSION', {"channelSession": channel_session, "reasonCode": "FORCE_CLOSED"})
+        dispatcher.action('REMOVE_CHANNEL_SESSION', {"channelSession": channel_session, "reasonCode": "INACTIVITY"})
         return []
 
     @staticmethod

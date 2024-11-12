@@ -17,7 +17,7 @@ class ParticipantRoleChanged:
                               str(room_info['id']), conversation)
                 for customer_channel_session in Utility.get_channel_sessions(conversation):
                     dispatcher.action('REMOVE_CHANNEL_SESSION', {"channelSession": customer_channel_session,
-                                                                 "reasonCode": "FORCE_CLOSED"})
+                                                                 "reasonCode": "AGENT"})
         return []
 
     @staticmethod

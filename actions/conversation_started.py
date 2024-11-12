@@ -11,6 +11,13 @@ class ConversationStarted:
             self.log_info("Latest intent is equal to 'START_CONVERSATION', bot will not be added", conversation['id'])
             return []
 
+        mrd_id = channel_session['channel']['channelType']['mediaRoutingDomain']
+
+        # Bot is not added for voice channels.
+        if mrd_id == '62f9e360ea5311eda05b0242' or mrd_id == '20316843be924c8ab4f57a7a':
+            self.log_info("Channel is of voice type, bot will not be added in conversation.", conversation['id'])
+            return []
+
         bot_id = channel_session['channel']['channelConfig']['botId']
         role = 'PRIMARY'
 

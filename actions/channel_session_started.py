@@ -12,10 +12,11 @@ class ChannelSessionStarted:
             return []
 
         channel_session = (Utility.get_key(slots, 'cimEvent'))['data']
+        mrd_id = channel_session['channel']['channelType']['mediaRoutingDomain']
 
         # ChannelSession.latestIntent field is set in case of 'Agent-Outbound' and 'Voice',
         # We do not want to dispatch the welcome message for these cases.
-        if not Utility.get_key(channel_session, 'latestIntent'):
+        if (mrd_id not in ['62f9e360ea5311eda05b0242', '20316843be924c8ab4f57a7a']) and not Utility.get_key(channel_session, 'latestIntent'):
             self.log_info("Latest intent is Empty, Dispatching welcome message", str(room_info['id']), conversation)
             dispatcher.text('Hey! this is sparrow from ExpertFlow. How may i help you today?')
 

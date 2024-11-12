@@ -10,7 +10,7 @@ class TaskEnqueued:
     else:
       media = active_media[0]
     
-    if media.get('type',{}).get('direction','') != 'CONSULT':
+    if media.get('type',{}).get('direction','') != 'CONSULT' and media.get('mrdId', '') != '62f9e360ea5311eda05b0242':
       dispatcher.text("You're routed to an agent, he/she will join in a moment.")
     
     return []
