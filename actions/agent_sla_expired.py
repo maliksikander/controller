@@ -5,7 +5,6 @@ from .utils.utility import Utility
 class AgentSlaExpired:
     def run(self, conversation, slots, dispatcher, metadata):
         room_info = (Utility.get_key(slots, 'cimEvent'))['roomInfo']
-        self.log_info("intent received", str(room_info['id']), conversation)
 
         if str(room_info['mode']) == "PRIVATE":
             self.log_info("Room-mode: Private, Ignoring this intent", str(room_info['id']), conversation)
